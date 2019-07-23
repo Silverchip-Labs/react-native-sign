@@ -4,7 +4,7 @@
     "main": "./src/index.js",
     "name": "react-native-sign",
     "private": false,
-    "version": "1.0.05",
+    "version": "1.0.06",
     "dependencies": {
         "react": "^16.8.3",
         "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
