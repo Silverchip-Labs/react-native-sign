@@ -1,13 +1,13 @@
 {
     "author": "",
     "description": "",
-    "main": "index.js",
+    "main": "./src/index.js",
     "name": "react-native-sign",
     "private": false,
     "version": "1.0.05",
     "dependencies": {
-        "expo": "^33.0.0",
         "react": "^16.8.3",
-        "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz"
+        "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
+        "react-native-view-shot": "^2.0.0"
     }
 }

@@ -34,7 +34,7 @@ export default class SigPad extends React.Component {
         return await takeSnapshotAsync(this.canvas, {
             format: "png",
             result: "base64",
-            quality: 1.0
+            quality: 0.3
         });
     };
 

@@ -4,13 +4,17 @@ import Svg, { G, Path } from "react-native-svg";
 import Reaction from "./Reaction";
 
 export default class Canvas extends React.Component {
+    static defaultProps = {
+        onStart: () => {},
+        onEnd: () => {},
+        donePaths: [],
+        setDonePaths: () => {}
+    };
+
     constructor(props, context) {
         super(props, context);
-        this.canvas = React.createRef();
         this.state = {
-            currentMax: 0,
-            currentPoints: [],
-            reaction: new Reaction()
+            currentPoints: []
         };
 
         this._panResponder = PanResponder.create({
@@ -23,49 +27,56 @@ export default class Canvas extends React.Component {
             onPanResponderMove: (evt, gs) => this.onResponderMove(evt, gs),
             onPanResponderRelease: (evt, gs) => this.onResponderRelease(evt, gs)
         });
+
+        this.canvas = React.createRef();
+        this.reaction = new Reaction();
+        this.delay = 10;
+        this.lastMoved = Date.now();
+        this.currentMax = 0;
     }
 
     onTouch(evt) {
         let [x, y] = [evt.nativeEvent.pageX, evt.nativeEvent.pageY];
-        const newCurrentPoints = this.state.currentPoints;
-        newCurrentPoints.push({ x, y });
+        const { currentPoints } = this.state;
 
         this.setState({
-            donePaths: this.props.donePaths,
-            currentPoints: newCurrentPoints,
-            currentMax: this.state.currentMax
+            currentPoints: currentPoints.concat({ x, y })
         });
     }
 
     onResponderGrant(evt) {
-        const { onStart = () => {} } = this.props;
         const canvas = this.canvas.current;
+
         this._measureComponent(canvas).then(({ px, py }) => {
-            this.state.reaction.setOffset(px, py);
-            console.log({px, py})
-        })
-        onStart();
+            this.reaction.setOffset(px, py);
+        });
+
+        this.props.onStart();
         this.onTouch(evt);
     }
 
     onResponderMove(evt) {
+        // throttle the requests to every 10ms
+        const time = Date.now();
+        const delta = time - this.lastMoved;
+        if (delta < this.delay) {
+            return;
+        }
+        this.lastMoved = time;
+
         this.onTouch(evt);
     }
 
     onResponderRelease() {
-        const { onEnd = () => {} } = this.props;
-        onEnd();
-
-        const newPaths = this.props.donePaths;
-        if (this.state.currentPoints.length > 0) {
+        let newPaths = this.props.donePaths;
+        const { currentPoints } = this.state;
+        if (currentPoints.length) {
             // Cache the shape object so that we aren't testing
             // whether or not it changed; too many components?
-            newPaths.push(
+            newPaths = newPaths.concat(
                 <Path
-                    key={this.state.currentMax}
-                    d={this.state.reaction.pointsToSvg(
-                        this.state.currentPoints
-                    )}
+                    key={this.currentMax}
+                    d={this.reaction.pointsToSvg(currentPoints)}
                     stroke="black"
                     strokeWidth={3}
                     fill="none"
@@ -73,13 +84,11 @@ export default class Canvas extends React.Component {
             );
         }
 
-        this.state.reaction.addGesture(this.state.currentPoints);
+        this.reaction.addGesture(currentPoints);
+        this.currentMax += 1;
+        this.setState({ currentPoints: [] });
 
-        this.setState({
-            currentPoints: [],
-            currentMax: this.state.currentMax + 1
-        });
-
+        this.props.onEnd();
         this.props.setDonePaths(newPaths);
     }
 
@@ -93,23 +102,14 @@ export default class Canvas extends React.Component {
 
     render() {
         return (
-            <View
-                ref={this.canvas}
-                style={[
-                    styles.drawContainer,
-                    { height: 200 }
-                ]}
-            >
+            <View ref={this.canvas} style={styles.drawContainer}>
                 <View {...this._panResponder.panHandlers}>
-                    <Svg
-                        style={styles.drawSurface}
-                        height={200}
-                    >
+                    <Svg style={styles.drawSurface} height={200}>
                         <G>
                             {this.props.donePaths.map(p => p)}
                             <Path
-                                key={this.state.currentMax}
-                                d={this.state.reaction.pointsToSvg(
+                                key={this.currentMax}
+                                d={this.reaction.pointsToSvg(
                                     this.state.currentPoints
                                 )}
                                 stroke="#4d4d4d"
@@ -135,7 +135,8 @@ let styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 2,
-        elevation: 1
+        elevation: 1,
+        height: 200
     },
     drawSurface: {
         backgroundColor: "transparent"
