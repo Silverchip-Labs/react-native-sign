@@ -1,14 +1,13 @@
 {
-    "name": "react-native-sign",
-    "version": "1.0.04",
+    "author": "",
     "description": "",
     "main": "index.js",
-    "author": "",
+    "name": "react-native-sign",
     "private": false,
+    "version": "1.0.04",
     "dependencies": {
         "expo": "^33.0.0",
         "react": "^16.8.3",
-        "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
-        "react-native-svg": "^9.5.3"
+        "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz"
     }
 }
