@@ -12,9 +12,9 @@ class Reaction {
         }
     }
 
-    setOffset(options) {
-        this._offsetX = options.x;
-        this._offsetY = options.y;
+    setOffset(x, y) {
+        this._offsetX = x;
+        this._offsetY = y;
     }
 
     pointsToSvg(points) {

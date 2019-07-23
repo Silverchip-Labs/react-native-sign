@@ -6,6 +6,7 @@ import Reaction from "./Reaction";
 export default class Canvas extends React.Component {
     constructor(props, context) {
         super(props, context);
+        this.canvas = React.createRef();
         this.state = {
             currentMax: 0,
             currentPoints: [],
@@ -14,6 +15,8 @@ export default class Canvas extends React.Component {
 
         this._panResponder = PanResponder.create({
             onPanResponderTerminate: () => true,
+            onPanResponderTerminationRequest: () => false,
+            onStartShouldSetPanResponderCapture: () => true,
             onStartShouldSetPanResponder: (evt, gs) => true,
             onMoveShouldSetPanResponder: (evt, gs) => false,
             onPanResponderGrant: (evt, gs) => this.onResponderGrant(evt, gs),
@@ -36,6 +39,11 @@ export default class Canvas extends React.Component {
 
     onResponderGrant(evt) {
         const { onStart = () => {} } = this.props;
+        const canvas = this.canvas.current;
+        this._measureComponent(canvas).then(({ px, py }) => {
+            this.state.reaction.setOffset(px, py);
+            console.log({px, py})
+        })
         onStart();
         this.onTouch(evt);
     }
@@ -75,24 +83,27 @@ export default class Canvas extends React.Component {
         this.props.setDonePaths(newPaths);
     }
 
-    _onLayoutContainer = e => {
-        this.state.reaction.setOffset(e.nativeEvent.layout);
+    _measureComponent = comp => {
+        return new Promise(resolve => {
+            comp.measure((fx, fy, width, height, px, py) => {
+                resolve({ fx, fy, width, height, px, py });
+            });
+        });
     };
 
     render() {
         return (
             <View
-                onLayout={this._onLayoutContainer}
+                ref={this.canvas}
                 style={[
                     styles.drawContainer,
-                    { width: this.props.width, height: this.props.height }
+                    { height: 200 }
                 ]}
             >
                 <View {...this._panResponder.panHandlers}>
                     <Svg
                         style={styles.drawSurface}
-                        width={this.props.width}
-                        height={this.props.height}
+                        height={200}
                     >
                         <G>
                             {this.props.donePaths.map(p => p)}

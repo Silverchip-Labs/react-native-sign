@@ -1,5 +1,4 @@
 import React from "react";
-import { Dimensions } from "react-native";
 import { captureRef as takeSnapshotAsync } from "react-native-view-shot";
 
 import Canvas from "./Canvas";
@@ -59,10 +58,8 @@ export default class SigPad extends React.Component {
                 ref={view => {
                     this.canvas = view;
                 }}
-                width={Dimensions.get("window").width - 20}
-                height={Dimensions.get("window").width - 20}
-                onStart={() => this.setState({ active: true })}
-                onEnd={() => this.setState({ active: false })}
+                onStart={this._handleStart}
+                onEnd={this._handleEnd}
                 donePaths={this.state.donePaths}
                 setDonePaths={this._setDonePaths}
             />
