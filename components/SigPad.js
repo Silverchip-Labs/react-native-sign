@@ -2,7 +2,7 @@ import React from "react";
 import { Dimensions } from "react-native";
 import { captureRef as takeSnapshotAsync } from "react-native-view-shot";
 
-import Canvas from "paint/components/Canvas";
+import Canvas from "./Canvas";
 
 export default class SigPad extends React.Component {
     constructor(props, context) {

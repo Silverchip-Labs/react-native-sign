@@ -1,7 +1,7 @@
 import React from "react";
 import { View, PanResponder, StyleSheet } from "react-native";
 import Svg, { G, Path } from "react-native-svg";
-import Reaction from "paint/components/Reaction";
+import Reaction from "./Reaction";
 
 export default class Canvas extends React.Component {
     constructor(props, context) {

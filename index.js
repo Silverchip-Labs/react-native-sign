@@ -1,3 +1,3 @@
-import SigPad from "paint/components/SigPad";
+import SigPad from "./components/SigPad";
 
 export default SigPad;
