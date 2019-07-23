@@ -4,7 +4,7 @@
     "main": "index.js",
     "name": "react-native-sign",
     "private": false,
-    "version": "1.0.04",
+    "version": "1.0.05",
     "dependencies": {
         "expo": "^33.0.0",
         "react": "^16.8.3",
