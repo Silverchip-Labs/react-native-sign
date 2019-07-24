@@ -106,7 +106,7 @@ export default class Canvas extends React.Component {
                 <View {...this._panResponder.panHandlers}>
                     <Svg style={styles.drawSurface} height={200}>
                         <G>
-                            {this.props.donePaths.map(p => p)}
+                            {this.props.donePaths}
                             <Path
                                 key={this.currentMax}
                                 d={this.reaction.pointsToSvg(

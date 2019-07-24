@@ -4,6 +4,12 @@ import { captureRef as takeSnapshotAsync } from "react-native-view-shot";
 import Canvas from "./Canvas";
 
 export default class SigPad extends React.Component {
+    static defaultProps = {
+        onStart: () => {},
+        onEnd: () => {},
+        onChange: () => {}
+    };
+
     constructor(props, context) {
         super(props, context);
 
@@ -15,42 +21,39 @@ export default class SigPad extends React.Component {
 
         this.clear = this.clear.bind(this);
         this.undo = this.undo.bind(this);
-        this.getValue = this.getValue.bind(this);
     }
 
     clear = () => {
-        this.setState({ donePaths: [] });
+        this._setDonePaths([]);
     };
 
     undo = () => {
-        this.setState({ donePaths: this.state.donePaths.slice(0, -1) });
+        this._setDonePaths(this.state.donePaths.slice(0, -1));
     };
 
-    getValue = async () => {
+    _handleChange = async () => {
         if (!this.state.donePaths.length) {
-            return "";
+            return this.props.onChange("");
         }
 
-        return await takeSnapshotAsync(this.canvas, {
+        const base64 = await takeSnapshotAsync(this.canvas, {
             format: "png",
             result: "base64",
-            quality: 0.3
+            quality: 0.2
         });
+        this.props.onChange(base64);
     };
 
-    _setDonePaths = donePaths => {
-        this.setState({ donePaths });
+    _setDonePaths = async (donePaths) => {
+        await this._setStateAsync({ donePaths });
+        this._handleChange();
     };
 
-    _handleStart = () => {
-        const { onStart = () => {} } = this.props;
-        onStart();
-    };
-
-    _handleEnd = () => {
-        const { onEnd = () => {} } = this.props;
-        onEnd();
-    };
+    _setStateAsync = (state) => {
+        return new Promise((resolve) => {
+          this.setState(state, resolve)
+        });
+    }
 
     render() {
         return (
@@ -58,8 +61,8 @@ export default class SigPad extends React.Component {
                 ref={view => {
                     this.canvas = view;
                 }}
-                onStart={this._handleStart}
-                onEnd={this._handleEnd}
+                onStart={this.props.onStart}
+                onEnd={this.props.onEnd}
                 donePaths={this.state.donePaths}
                 setDonePaths={this._setDonePaths}
             />
