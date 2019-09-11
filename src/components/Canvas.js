@@ -30,7 +30,7 @@ export default class Canvas extends React.Component {
 
         this.canvas = React.createRef();
         this.reaction = new Reaction();
-        this.delay = 10;
+        this.delay = 5;
         this.lastMoved = Date.now();
         this.currentMax = 0;
     }
