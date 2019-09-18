@@ -5,6 +5,7 @@ import Reaction from "./Reaction";
 
 export default class Canvas extends React.Component {
     static defaultProps = {
+        throttleWait: 5,
         onStart: () => {},
         onEnd: () => {},
         donePaths: [],
@@ -30,7 +31,6 @@ export default class Canvas extends React.Component {
 
         this.canvas = React.createRef();
         this.reaction = new Reaction();
-        this.delay = 5;
         this.lastMoved = Date.now();
         this.currentMax = 0;
     }
@@ -59,7 +59,7 @@ export default class Canvas extends React.Component {
         // throttle the requests to every 10ms
         const time = Date.now();
         const delta = time - this.lastMoved;
-        if (delta < this.delay) {
+        if (delta < this.props.throttleWait) {
             return;
         }
         this.lastMoved = time;

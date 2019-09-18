@@ -5,6 +5,7 @@ import Canvas from "./Canvas";
 
 export default class SigPad extends React.Component {
     static defaultProps = {
+        throttleWait: 5,
         onStart: () => {},
         onEnd: () => {},
         onChange: () => {}
@@ -44,16 +45,16 @@ export default class SigPad extends React.Component {
         this.props.onChange(base64);
     };
 
-    _setDonePaths = async (donePaths) => {
+    _setDonePaths = async donePaths => {
         await this._setStateAsync({ donePaths });
         this._handleChange();
     };
 
-    _setStateAsync = (state) => {
-        return new Promise((resolve) => {
-          this.setState(state, resolve)
+    _setStateAsync = state => {
+        return new Promise(resolve => {
+            this.setState(state, resolve);
         });
-    }
+    };
 
     render() {
         return (
@@ -61,6 +62,7 @@ export default class SigPad extends React.Component {
                 ref={view => {
                     this.canvas = view;
                 }}
+                throttleWait={this.props.throttleWait}
                 onStart={this.props.onStart}
                 onEnd={this.props.onEnd}
                 donePaths={this.state.donePaths}
