@@ -2,6 +2,7 @@
     "author": "",
     "description": "",
     "main": "./src/index.js",
+    "types": "./src/index.d.ts",
     "name": "react-native-sign",
     "private": false,
     "version": "1.0.11",
